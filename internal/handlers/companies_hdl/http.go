@@ -1,6 +1,7 @@
 package companieshdl
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -24,5 +25,8 @@ func (rh HTTPHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println(company.Name)
+	err = json.NewEncoder(w).Encode(company)
+	if err != nil {
+		log.Println("[ERROR] serializing drug", err)
+	}
 }
