@@ -9,24 +9,31 @@ import (
 	"syscall"
 	"time"
 
+	companiessrv "github.com/IsaErtunga/companies/internal/core/services/companies_srv"
+	companieshdl "github.com/IsaErtunga/companies/internal/handlers/companies_hdl"
+	companiesrepo "github.com/IsaErtunga/companies/internal/repositories/companies_repo"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 )
 
-func service() http.Handler {
+func main() {
+	companiesRepository := companiesrepo.NewMemKVS()
+	companiesService := companiessrv.New(companiesRepository)
+	companiesHandler := companieshdl.NewHTTPHandler(companiesService)
+
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
+
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("root."))
 	})
-	return router
-}
 
-func main() {
+	router.Get("/company", companiesHandler.Get)
+
 	server := http.Server{
 		Addr:         ":9090",           // configure the bind address
-		Handler:      service(),         // set the default handler
+		Handler:      router,            // set the default handler
 		ReadTimeout:  5 * time.Second,   // max time to read request from the client
 		WriteTimeout: 10 * time.Second,  // max time to write response to the client
 		IdleTimeout:  120 * time.Second, // max time for connections using TCP Keep-Alive
