@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
+	companiesadpt "github.com/IsaErtunga/companies/internal/adapters/companies"
 	companiessrv "github.com/IsaErtunga/companies/internal/core/services/companies_srv"
-	companieshdl "github.com/IsaErtunga/companies/internal/handlers/companies_hdl"
 	companiesrepo "github.com/IsaErtunga/companies/internal/repositories/companies_repo"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -19,7 +19,7 @@ import (
 func main() {
 	companiesRepository := companiesrepo.NewMemKVS()
 	companiesService := companiessrv.New(companiesRepository)
-	companiesHandler := companieshdl.NewHTTPHandler(companiesService)
+	companiesAdapter := companiesadpt.NewHTTPAdapter(companiesService)
 
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
@@ -29,7 +29,8 @@ func main() {
 		w.Write([]byte("root."))
 	})
 
-	router.Get("/company", companiesHandler.Get)
+	router.Get("/companies", companiesAdapter.GetCompany)
+	router.Post("/companies", companiesAdapter.CreateCompany)
 
 	server := http.Server{
 		Addr:         ":9090",           // configure the bind address

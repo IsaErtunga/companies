@@ -25,3 +25,17 @@ func (srv service) Get(id domain.CompanyID) (domain.Company, error) {
 
 	return company, nil
 }
+
+func (srv service) Create(name string) (domain.CompanyID, error) {
+	company := domain.Company{
+		ID:   "123",
+		Name: "FIRST",
+		City: "Sthlm",
+	}
+	err := srv.repo.Insert(company)
+	if err != nil {
+		return "", errors.New("create company has failed")
+	}
+
+	return company.ID, nil
+}
