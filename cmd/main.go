@@ -29,8 +29,7 @@ func main() {
 		w.Write([]byte("root."))
 	})
 
-	router.Get("/companies", companiesAdapter.GetCompany)
-	router.Post("/companies", companiesAdapter.CreateCompany)
+	router.Mount("/companies", companiesAdapter.Routes())
 
 	server := http.Server{
 		Addr:         ":9090",           // configure the bind address
