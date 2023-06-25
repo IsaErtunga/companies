@@ -15,7 +15,7 @@ func NewMemKVS() *memkvs {
 	return &memkvs{kvs: map[string][]byte{}}
 }
 
-func (repo memkvs) Get(id domain.CompanyID) (domain.Company, error) {
+func (repo memkvs) GetById(id domain.CompanyID) (domain.Company, error) {
 	// return domain.Company{ID: "123", Name: "isa", City: "ss"}, nil
 	if value, ok := repo.kvs[string(id)]; ok {
 		company := domain.Company{}
@@ -38,4 +38,17 @@ func (repo memkvs) Insert(company domain.Company) error {
 
 	repo.kvs[string(company.ID)] = companyJSON
 	return nil
+}
+
+func (repo memkvs) GetAll() ([]domain.Company, error) {
+	values := make([]domain.Company, 0, len(repo.kvs))
+	for _, value := range repo.kvs {
+		company := domain.Company{}
+		err := json.Unmarshal(value, &company)
+		if err != nil {
+			return []domain.Company{}, errors.New("fail to parse JSON from kvs")
+		}
+		values = append(values, company)
+	}
+	return values, nil
 }

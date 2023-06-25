@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/IsaErtunga/companies/internal/core/domain"
 	"github.com/IsaErtunga/companies/internal/core/ports"
 	"github.com/go-chi/chi"
 )
@@ -25,8 +26,9 @@ func (adpt Adapter) Routes() chi.Router {
 
 	// r.Get("/", adpt.GetCompany)
 	r.Post("/", adpt.CreateCompany)
+	r.Get("/", adpt.ListCompanies)
 
-	r.Route("/{id}", func(r chi.Router) {
+	r.Route("/{companyId}", func(r chi.Router) {
 		r.Get("/", adpt.GetCompany)
 	})
 
@@ -34,13 +36,27 @@ func (adpt Adapter) Routes() chi.Router {
 }
 
 func (adpt Adapter) GetCompany(w http.ResponseWriter, r *http.Request) {
-	company, err := adpt.companiesService.Get("123")
+	companyId := domain.CompanyID(chi.URLParam(r, "companyId"))
+	company, err := adpt.companiesService.Get(companyId)
 	if err != nil {
 		log.Println("get error")
 		return
 	}
 
 	err = json.NewEncoder(w).Encode(company)
+	if err != nil {
+		log.Println("[ERROR] serializing", err)
+	}
+}
+
+func (adpt Adapter) ListCompanies(w http.ResponseWriter, r *http.Request) {
+	companies, err := adpt.companiesService.List()
+	if err != nil {
+		log.Println("list error")
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(companies)
 	if err != nil {
 		log.Println("[ERROR] serializing", err)
 	}
@@ -54,7 +70,7 @@ func (adpt Adapter) CreateCompany(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var companyData struct {
-		ID   string `json:"id`
+		ID   string `json:"id"`
 		Name string `json:"name"`
 		City string `json:"city"`
 	}
@@ -64,7 +80,7 @@ func (adpt Adapter) CreateCompany(w http.ResponseWriter, r *http.Request) {
 		log.Println("[ERROR] deserializing", err)
 	}
 
-	err = adpt.companiesService.Create(companyData.Name)
+	err = adpt.companiesService.Create(companyData.Name, companyData.City)
 	if err != nil {
 		log.Println("create error")
 		return
