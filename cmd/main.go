@@ -17,6 +17,7 @@ import (
 )
 
 func main() {
+	// init
 	companiesRepository := companiesrepo.NewMemKVS()
 	companiesService := companiessrv.New(companiesRepository)
 	companiesAdapter := companiesadpt.NewHTTPAdapter(companiesService)
