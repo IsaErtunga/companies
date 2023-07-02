@@ -16,7 +16,6 @@ func NewMemKVS() *memkvs {
 }
 
 func (repo memkvs) GetById(id domain.CompanyID) (domain.Company, error) {
-	// return domain.Company{ID: "123", Name: "isa", City: "ss"}, nil
 	if value, ok := repo.kvs[string(id)]; ok {
 		company := domain.Company{}
 		err := json.Unmarshal(value, &company)

@@ -24,7 +24,6 @@ func NewHTTPAdapter(companiesService ports.CompaniesService) *Adapter {
 func (adpt Adapter) Routes() chi.Router {
 	r := chi.NewRouter()
 
-	// r.Get("/", adpt.GetCompany)
 	r.Post("/", adpt.CreateCompany)
 	r.Get("/", adpt.ListCompanies)
 
