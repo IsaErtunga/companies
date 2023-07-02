@@ -22,4 +22,5 @@ go.work
 
 # Terraform state file
 *.tfstate*
-infrastructure/.terraform/
+# infrastructure/.terraform/
+infrastructure/
