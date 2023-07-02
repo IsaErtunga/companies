@@ -10,7 +10,7 @@ env:
   CONTAINER_NAME: ${{vars.CONTAINER_NAME}}
   ECS_SERVICE: ${{vars.ECS_SERVICE_NAME}}
   ECS_CLUSTER: ${{vars.ECS_CLUSTER_NAME}}
-  ECS_TASK_DEFINITION: ${{vars.ECS_TASK_DEFINITION_NAME}}
+  ECS_TASK_DEFINITION: "infrastructre/companies_task_def.json"
 
 permissions:
   contents: read
